@@ -66,7 +66,7 @@ def generate_verilog(global_inputs, gates, conn_a, conn_b, number_of_categories=
     gate_idx = 0
     for layer_idx, layer_gates, layer_conn_a, layer_conn_b in zip(range(len(gates)), gates, conn_a, conn_b):
         if layer_idx > 0:
-            decl += f"    wire [{len(gates[layer_idx-1])}:0] layer_{layer_idx-1};\n"
+            decl += f"    wire [{len(gates[layer_idx-1])-1}:0] layer_{layer_idx-1};\n"
             input = f"layer_{layer_idx-1}"
         else:
             input = "in"
