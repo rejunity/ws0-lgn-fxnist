@@ -85,11 +85,11 @@ module sum_bits #(
     reg [$clog2(N)-1:0] temp_sum;
     
     always @(*) begin
-        // @TODO: try this instead temp_sum = $countones(y); 
-        temp_sum = 0;
-        for (i = 0; i < N; i = i + 1) begin
-            if (y[i]) temp_sum = temp_sum + 1; // avoids warning "Operator ADD expects 10 bits on the RHS, but RHS's SEL generates 1 bits"
-        end
+        temp_sum = $countones(y); 
+        // temp_sum = 0;
+        // for (i = 0; i < N; i = i + 1) begin
+        //     if (y[i]) temp_sum = temp_sum + 1; // avoids warning "Operator ADD expects 10 bits on the RHS, but RHS's SEL generates 1 bits"
+        // end
     end
     
     assign sum = temp_sum;
