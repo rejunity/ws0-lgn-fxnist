@@ -95,10 +95,10 @@ PAD_WEST: [
     "inputs\\[1\\].pad",
     "inputs\\[0\\].pad",
     
-    "analog\\[3\\].pad",
-    "analog\\[2\\].pad",
-    "analog\\[1\\].pad",
-    "analog\\[0\\].pad",
+    "bidir\\[49\\].pad",
+    "bidir\\[48\\].pad",
+    "bidir\\[47\\].pad",
+    "bidir\\[46\\].pad",
     
     "dvss_pads\\[6\\].pad",
     "dvdd_pads\\[6\\].pad"
