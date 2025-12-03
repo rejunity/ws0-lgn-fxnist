@@ -31,7 +31,6 @@ module chip_core #(
 
     inout  wire [NUM_ANALOG_PADS-1:0] analog  // Analog
 );
-
     // See here for usage: https://gf180mcu-pdk.readthedocs.io/en/latest/IPs/IO/gf180mcu_fd_io/digital.html
     
     // Disable pull-up and pull-down for input
@@ -47,19 +46,20 @@ module chip_core #(
     assign bidir_pd = '0;
     
     logic _unused;
-    assign _unused = &bidir_in;
+    assign _unused =  &{input_in[NUM_INPUT_PADS-1 : 9],
+                        bidir_in};
 
-    logic [NUM_BIDIR_PADS-1:0] count;
+    ////////////////////////////////////
+    lgn lgn (
+        .clk            (clk),
+        .write_enable   (input_in [0      ]),
+        .ui_in          (input_in [1 +: 8 ]),
+        .uo_out         (bidir_out[0 +: 16])
+    );
+    assign bidir_out[NUM_BIDIR_PADS-1 : 16] = 0;
+    ////////////////////////////////////
 
-    always_ff @(posedge clk) begin
-        if (!rst_n) begin
-            count <= '0;
-        end else begin
-            if (&input_in) begin
-                count <= count + 1;
-            end
-        end
-    end
+
 
     logic [7:0] sram_0_out;
 
@@ -94,8 +94,6 @@ module chip_core #(
         .D    ('0),
         .Q    (sram_1_out)
     );
-
-    assign bidir_out = count ^ {24'd0, sram_0_out, sram_1_out};
 
 endmodule
 
