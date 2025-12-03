@@ -114,7 +114,7 @@ module arg_max_10 #(
     always @(*) begin
         // Stage 1: Compare adjacent pairs
         for (i = 0; i < 5; i = i + 1) begin
-            assert (2*i+1 <= CATEGORIES) else $error("2*i out of range: i=%0d", i);
+            assert (2*i+1 <= CATEGORIES);
             if (categories[(2*i)*N +: N] > categories[(2*i+1)*N +: N]) begin
                 max_value_stage1[i] = categories[(2*i)*N +: N];
                 max_index_stage1[i] = INDEX_WIDTH'(2*i);
