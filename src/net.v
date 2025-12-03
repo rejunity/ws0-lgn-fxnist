@@ -5,7 +5,7 @@ module net (
     output wire [7999:0] out,
     output wire [7999:0] categories
 );
-    wire [8000:0] layer_0;
+    wire [7999:0] layer_0;
 
     // Layer 0 ============================================================
     assign layer_0[0] = ~in[326] | (in[326] & in[649]); 
