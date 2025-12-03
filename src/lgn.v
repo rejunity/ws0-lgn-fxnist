@@ -39,12 +39,6 @@ module lgn (
         .y(y_categories[i*BITS_PER_CATEGORY +: BITS_PER_CATEGORY]),      
         .sum(sum_categories[i*BITS_PER_CATEGORY_SUM +: BITS_PER_CATEGORY_SUM])
       );
-      
-      // sum_255_bits sum_bits(
-      //   .y(y_categories[i*BITS_PER_CATEGORY +: BITS_PER_CATEGORY]),
-      //   .sum(sum_categories[i*BITS_PER_CATEGORY_SUM +: BITS_PER_CATEGORY_SUM])
-      // );
-
     end
   endgenerate
 
@@ -94,34 +88,6 @@ module sum_bits #(
     
     assign sum = temp_sum;
 endmodule
-
-// module sum_511_bits (
-//     input wire [512-1:0] y,
-//     output wire  [9-1:0] sum
-// );
-//     wire [7:0] count0;
-//     wire [7:0] count1;
-//     PopCount256 popcount0(.data(y[0*256 +: 256]), .count(count0));
-//     PopCount256 popcount1(.data(y[1*256 +: 256]), .count(count1));
-//     wire unused_msb;
-//     assign {unused_msb, sum} = count0 + count1;
-// endmodule
-
-// module sum_255_bits (
-//     input wire [255-1:0] y,
-//     output wire  [8-1:0] sum
-// );
-//     wire unused_msb;
-//     PopCount256 popcount256(.data({1'b0, y}), .count({unused_msb, sum}));
-// endmodule
-
-// module sum_127_bits (
-//     input wire [127-1:0] y,
-//     output wire  [7-1:0] sum
-// );
-//     wire unused_msb;
-//     PopCount128 popcount128(.data({1'b0, y}), .count({unused_msb, sum}));
-// endmodule
 
 module arg_max_10 #(
     parameter N = 8,
