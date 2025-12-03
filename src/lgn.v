@@ -9,20 +9,21 @@ module lgn (
     input  wire clk,
     input  wire write_enable,
     input  wire [7:0]  ui_in,    // Dedicated inputs
-    output wire [15:0] uo_out,   // Dedicated outputs
+    output wire [15:0] uo_out    // Dedicated outputs
 );
   localparam INPUTS  = 28*28;
   localparam CATEGORIES = 10;
   localparam BITS_PER_CATEGORY = 800;
   localparam OUTPUTS = BITS_PER_CATEGORY * CATEGORIES;
   localparam BITS_PER_CATEGORY_SUM = $clog2(BITS_PER_CATEGORY);
+
+  reg   [INPUTS-1:0] x;
   always @(posedge clk) begin : set_inputs
     if (write_enable)
       x <= {x[INPUTS-8-1:0], ui_in[7:0]};
   end
 
-  reg   [INPUTS-1:0] x;
-  wire [OUTPUTS-1:0] y;
+  wire [OUTPUTS-1:0] y; wire _unused = &{y};
   wire [BITS_PER_CATEGORY*CATEGORIES-1:0] y_categories;
   net net(
     .in(x),
@@ -47,6 +48,7 @@ module lgn (
     end
   endgenerate
 
+  /* verilator lint_off UNUSEDSIGNAL */
   wire [3:0] best_category_index;
   wire [BITS_PER_CATEGORY_SUM-1:0] best_category_value;
   arg_max_10 #(.N(BITS_PER_CATEGORY_SUM)) arg_max_categories(
@@ -70,7 +72,7 @@ module lgn (
   assign  uo_out[6:0] = display;
   assign  uo_out[7] = ~write_enable;
   assign  uo_out[15:8] = best_category_value[BITS_PER_CATEGORY_SUM-1 -: 8];
-
+  /* verilator lint_on UNUSEDSIGNAL */
 endmodule
 
 module sum_bits #(
@@ -83,9 +85,10 @@ module sum_bits #(
     reg [$clog2(N)-1:0] temp_sum;
     
     always @(*) begin
+        // @TODO: try this instead temp_sum = $countones(y); 
         temp_sum = 0;
         for (i = 0; i < N; i = i + 1) begin
-            temp_sum = temp_sum + y[i];
+            if (y[i]) temp_sum = temp_sum + 1; // avoids warning "Operator ADD expects 10 bits on the RHS, but RHS's SEL generates 1 bits"
         end
     end
     
@@ -121,12 +124,15 @@ endmodule
 // endmodule
 
 module arg_max_10 #(
-    parameter N = 8
+    parameter N = 8,
+    parameter CATEGORIES = 10  // CAN NOT change this, 10 is hardcoded in the number of Stages below
 ) (
-    input wire [10*N-1:0] categories,
+    input wire [CATEGORIES*N-1:0] categories,
     output reg [3:0] out_index,
     output reg [N-1:0] out_value
 );
+    localparam int INDEX_WIDTH = $clog2(CATEGORIES);
+
     // Intermediate wires for the tree comparison
     (* mem2reg *) reg [N-1:0] max_value_stage1 [4:0];  // Stage 1: Compare adjacent pairs
     (* mem2reg *) reg [3:0]   max_index_stage1 [4:0]; 
@@ -142,12 +148,13 @@ module arg_max_10 #(
     always @(*) begin
         // Stage 1: Compare adjacent pairs
         for (i = 0; i < 5; i = i + 1) begin
+            assert (2*i+1 <= CATEGORIES) else $error("2*i out of range: i=%0d", i);
             if (categories[(2*i)*N +: N] > categories[(2*i+1)*N +: N]) begin
                 max_value_stage1[i] = categories[(2*i)*N +: N];
-                max_index_stage1[i] = 2*i;
+                max_index_stage1[i] = INDEX_WIDTH'(2*i);
             end else begin
                 max_value_stage1[i] = categories[(2*i+1)*N +: N];
-                max_index_stage1[i] = 2*i+1;
+                max_index_stage1[i] = INDEX_WIDTH'(2*i+1);
             end
         end
 
