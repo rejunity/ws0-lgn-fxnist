@@ -45,54 +45,21 @@ module chip_core #(
     assign bidir_pu = '0;
     assign bidir_pd = '0;
     
-    logic _unused;
-    assign _unused =  &{input_in[NUM_INPUT_PADS-1 : 9],
-                        bidir_in};
-
-
-    logic [7:0] sram_0_out;
-
-    gf180mcu_fd_ip_sram__sram512x8m8wm1 sram_0 (
-        `ifdef USE_POWER_PINS
-        .VDD  (VDD),
-        .VSS  (VSS),
-        `endif
-
-        .CLK  (clk),
-        .CEN  (1'b1),
-        .GWEN (1'b0),
-        .WEN  (8'b0),
-        .A    ('0),
-        .D    ('0),
-        .Q    (sram_0_out)
-    );
-
-    logic [7:0] sram_1_out;
-
-    gf180mcu_fd_ip_sram__sram512x8m8wm1 sram_1 (
-        `ifdef USE_POWER_PINS
-        .VDD  (VDD),
-        .VSS  (VSS),
-        `endif
-
-        .CLK  (clk),
-        .CEN  (1'b1),
-        .GWEN (1'b0),
-        .WEN  (8'b0),
-        .A    ('0),
-        .D    ('0),
-        .Q    (sram_1_out)
-    );
-
     ////////////////////////////////////
+    localparam INPUTS  = 8;
+    localparam OUTPUTS = 16;
     lgn lgn (
         .clk            (clk),
         .write_enable   (input_in [0      ]),
-        .ui_in          (input_in [1 +: 8 ]),
-        .uo_out         (bidir_out[0 +: 16])
+        .ui_in          (input_in [1 +: INPUTS]),
+        .uo_out         (bidir_out[0 +: OUTPUTS])
     );
+    localparam TOTAL_INPUTS = INPUTS+1; // pixel input pins + 1 write_enable pin
 
-    logic [NUM_BIDIR_PADS-32-1: 0] count;
+    ////////////////////////////////////
+
+    // NOTE: this is just to silence rst_n for now
+    logic [NUM_BIDIR_PADS-OUTPUTS-1: 0] count;
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             count <= '0;
@@ -100,9 +67,10 @@ module chip_core #(
             count <= count + 1;
         end
     end
-    assign bidir_out[31               : 16] = {sram_0_out, sram_1_out}; // @TODO: remove and make the following assign bidir_out[NUM_BIDIR_PADS-1 : 32] = 0;
-    assign bidir_out[NUM_BIDIR_PADS-1 : 32] = count;
-    ////////////////////////////////////
+
+    logic _unused;
+    assign _unused =  &{input_in[NUM_INPUT_PADS-1 : TOTAL_INPUTS], bidir_in};
+    assign             bidir_out[NUM_BIDIR_PADS-1 :      OUTPUTS] = count;
 
 endmodule
 
