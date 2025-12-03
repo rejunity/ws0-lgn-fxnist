@@ -71,10 +71,11 @@ async def test_counter(dut):
     await ClockCycles(dut.clk_PAD, 10)
 
     # Start the counter by setting all inputs to 1
-    dut.input_PAD.value = -1
+    dut.input_PAD.value = 1
 
     # Wait for a number of clock cycles
-    await ClockCycles(dut.clk_PAD, 100)
+    print("Running 2 cycles of the LGN inference, this might take some time!")
+    await ClockCycles(dut.clk_PAD, 2)
 
     # # Check the end result of the counter
     # assert dut.bidir_PAD.value == 100 - 1
