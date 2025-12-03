@@ -75,18 +75,18 @@ module sum_bits #(
     input wire [N-1:0] y,
     output wire [$clog2(N)-1:0] sum
 );
-    // integer i;
-    // reg [$clog2(N)-1:0] temp_sum;
+    integer i;
+    reg [$clog2(N)-1:0] temp_sum;
     
-    // always @(*) begin
-    //     temp_sum = 0;
-    //     for (i = 0; i < N; i = i + 1) begin
-    //         if (y[i]) temp_sum = temp_sum + 1; // avoids warning "Operator ADD expects 10 bits on the RHS, but RHS's SEL generates 1 bits"
-    //     end
-    // end
+    always @(*) begin
+        temp_sum = 0;
+        for (i = 0; i < N; i = i + 1) begin
+            if (y[i]) temp_sum = temp_sum + 1; // avoids warning "Operator ADD expects 10 bits on the RHS, but RHS's SEL generates 1 bits"
+        end
+    end
     
-    // assign sum = temp_sum;
-    assign sum = $countones(y); 
+    assign sum = temp_sum;
+    // assign sum = $countones(y); 
 endmodule
 
 module arg_max_10 #(
