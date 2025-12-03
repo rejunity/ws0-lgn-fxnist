@@ -49,17 +49,6 @@ module chip_core #(
     assign _unused =  &{input_in[NUM_INPUT_PADS-1 : 9],
                         bidir_in};
 
-    ////////////////////////////////////
-    lgn lgn (
-        .clk            (clk),
-        .write_enable   (input_in [0      ]),
-        .ui_in          (input_in [1 +: 8 ]),
-        .uo_out         (bidir_out[0 +: 16])
-    );
-    assign bidir_out[NUM_BIDIR_PADS-1 : 16] = 0;
-    ////////////////////////////////////
-
-
 
     logic [7:0] sram_0_out;
 
@@ -94,6 +83,26 @@ module chip_core #(
         .D    ('0),
         .Q    (sram_1_out)
     );
+
+    ////////////////////////////////////
+    lgn lgn (
+        .clk            (clk),
+        .write_enable   (input_in [0      ]),
+        .ui_in          (input_in [1 +: 8 ]),
+        .uo_out         (bidir_out[0 +: 16])
+    );
+
+    logic [NUM_BIDIR_PADS-32-1: 0] count;
+    always_ff @(posedge clk) begin
+        if (!rst_n) begin
+            count <= '0;
+        end else begin
+            count <= count + 1;
+        end
+    end
+    assign bidir_out[31               : 16] = {sram_0_out, sram_1_out}; // @TODO: remove and make the following assign bidir_out[NUM_BIDIR_PADS-1 : 32] = 0;
+    assign bidir_out[NUM_BIDIR_PADS-1 : 32] = count;
+    ////////////////////////////////////
 
 endmodule
 
