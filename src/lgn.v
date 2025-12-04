@@ -11,9 +11,9 @@ module lgn (
     input  wire [7:0]  ui_in,    // Dedicated inputs
     output wire [15:0] uo_out    // Dedicated outputs
 );
-  localparam INPUTS  = 16*16*3; // IMG_WIDTH=16 BINARIZE_IMAGE_THRESHOLD="[.25, .5, .75]"
+  localparam INPUTS  = 16*16*4; // IMG_WIDTH=16 BINARIZE_IMAGE_THRESHOLD="[.2, .4, .6, .8]"
   localparam CATEGORIES = 10;
-  localparam BITS_PER_CATEGORY = 511; // 800
+  localparam BITS_PER_CATEGORY = 800; // 511;
   localparam OUTPUTS = BITS_PER_CATEGORY * CATEGORIES;
   localparam BITS_PER_CATEGORY_SUM = $clog2(BITS_PER_CATEGORY);
 
