@@ -11,7 +11,7 @@ module lgn (
     input  wire [7:0]  ui_in,    // Dedicated inputs
     output wire [15:0] uo_out    // Dedicated outputs
 );
-  localparam INPUTS  = 28*28;
+  localparam INPUTS  = 16*16*3; // IMG_WIDTH=16 BINARIZE_IMAGE_THRESHOLD="[.25, .5, .75]"
   localparam CATEGORIES = 10;
   localparam BITS_PER_CATEGORY = 511; // 800
   localparam OUTPUTS = BITS_PER_CATEGORY * CATEGORIES;
@@ -94,7 +94,7 @@ module arg_max_10 #(
     parameter CATEGORIES = 10  // CAN NOT change this, 10 is hardcoded in the number of Stages below
 ) (
     input wire [CATEGORIES*N-1:0] categories,
-    output reg [3:0] out_index,
+    output reg [$clog2(CATEGORIES)-1:0] out_index,
     output reg [N-1:0] out_value
 );
     localparam int INDEX_WIDTH = $clog2(CATEGORIES);

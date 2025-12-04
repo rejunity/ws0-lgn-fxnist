@@ -44,7 +44,7 @@ X = \
  [1] * 256]
 
 
-Y = "../src/20251204-053837_binTestAcc7780_seed521734_epochs2_2x8000_b256_lr75_interconnect.npz"
+Y = "../src/20251204-054922_binTestAcc8709_seed749733_epochs30_2x8000_b256_lr75_interconnect.npz"
 ###############################################################################
 
 def split_array(lst, chunk_size=8):
