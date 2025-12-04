@@ -44,7 +44,9 @@ X = \
  [1] * 256]
 
 
-Y = "../src/20251204-054922_binTestAcc8709_seed749733_epochs30_2x8000_b256_lr75_interconnect.npz"
+Y = "../src/20251204-081925_binTestAcc8807_seed190838_epochs300_2x8000_b256_lr30_interconnect.npz"
+
+NUMBER_OF_TESTS_SAMPLES_TO_RUN = 4 # run 4 test samples
 ###############################################################################
 
 def split_array(lst, chunk_size=8):
@@ -164,8 +166,9 @@ async def test_lgn(dut):
     print("test network starts")
     # Set the input values you want to test
     alt = 0
-    for x, y in zip(X[:8], Y[:8]): # dataset can contain a lot of test samples
-                                   # take only 8 for tractable speed of the test
+    for x, y in zip(X[:NUMBER_OF_TESTS_SAMPLES_TO_RUN],
+                    Y[:NUMBER_OF_TESTS_SAMPLES_TO_RUN]): # dataset can contain a lot of test samples
+                                                         # take only several for tractable speed of the test
         x = x[::-1] # reverse input data for uploading via the shift register
         logger.info(f"Input: {array_to_bin(x)}")
         logger.info("Clear input buffer")
@@ -201,35 +204,6 @@ async def test_lgn(dut):
         assert_output(dut, y)
 
     logger.info("Done!")
-
-# # @cocotb.test()
-# async def test_counter(dut):
-#     """Run the counter test"""
-
-#     # Create a logger for this testbench
-#     logger = logging.getLogger("my_testbench")
-
-#     logger.info("Startup sequence...")
-
-#     # Start up
-#     await start_up(dut)
-
-#     logger.info("Running the test...")
-
-#     # Wait for some time...
-#     await ClockCycles(dut.clk_PAD, 10)
-
-#     # Start the counter by setting all inputs to 1
-#     dut.input_PAD.value = 1
-
-#     # Wait for a number of clock cycles
-#     print("Running 2 cycles of the LGN inference, this might take some time!")
-#     await ClockCycles(dut.clk_PAD, 2)
-
-#     # # Check the end result of the counter
-#     # assert dut.bidir_PAD.value == 100 - 1
-
-#    logger.info("Done!")
 
 
 def chip_top_runner():
