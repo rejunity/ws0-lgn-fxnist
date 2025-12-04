@@ -13,7 +13,7 @@ module lgn (
 );
   localparam INPUTS  = 28*28;
   localparam CATEGORIES = 10;
-  localparam BITS_PER_CATEGORY = 800;
+  localparam BITS_PER_CATEGORY = 511; // 800
   localparam OUTPUTS = BITS_PER_CATEGORY * CATEGORIES;
   localparam BITS_PER_CATEGORY_SUM = $clog2(BITS_PER_CATEGORY);
 

@@ -73,6 +73,10 @@
           
           # For logo generation
           pillow
+
+          # LGN
+          numpy
+          torch
         ];
       }) {};
     });

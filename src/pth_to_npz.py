@@ -100,6 +100,9 @@ def pth_to_npz(checkpoint):
         print("Number of new null gates & connections added for padding:", padded_size - original_size)
     print("Total number of gates in the network:", np.size(gate_types))
 
+    if len(dataset_input) > 1 or dataset_input[0].numel() > 2:
+        print("Number of test examples included:", len(dataset_input))
+
     return {    "gate_types"    : gate_types,
                 "connections.A" : connections[0],
                 "connections.B" : connections[1],
