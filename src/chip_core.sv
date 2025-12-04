@@ -47,8 +47,8 @@ module chip_core #(
     localparam OUTPUTS = 16;
     lgn lgn (
         .clk            (clk),
-        .write_enable   (input_in [0      ]),
-        .ui_in          (input_in [1 +: INPUTS]),
+        .ui_in          (input_in [0 +: INPUTS]),
+        .write_enable   (~input_in[INPUTS]),
         .uo_out         (bidir_out[0 +: OUTPUTS])
     );
     localparam TOTAL_INPUTS = INPUTS+1; // pixel input pins + 1 write_enable pin
