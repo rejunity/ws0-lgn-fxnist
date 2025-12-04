@@ -24,8 +24,8 @@ hdl_toplevel = "chip_top"
 #########################################################################################################################
 import numpy as np
 
-WRITE_ENABLE  = 512
-WRITE_DISABLE = 0
+WRITE_ENABLE  = 0
+WRITE_DISABLE = 256
 
 gates_value = os.getenv('GATES')
 GATE_LEVEL_SIMULATION = not gates_value in (None, "no")
@@ -191,7 +191,7 @@ async def test_lgn(dut):
             print(array_to_bin(block_of_8), end="")
             if i % 2 == 1:
                 print(f" best index: {category_index()} value: {category_value()}")
-            dut.input_PAD.value = int(array_to_bin(block_of_8), 2)
+            dut.input_PAD.value = int(array_to_bin(block_of_8), 2) | WRITE_ENABLE
             await ClockCycles(dut.clk_PAD, 1)
             i += 1
 
