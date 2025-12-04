@@ -44,7 +44,7 @@ X = \
  [1] * 256]
 
 
-Y = "../src/20251204-081925_binTestAcc8807_seed190838_epochs300_2x8000_b256_lr30_interconnect.npz"
+Y = "../src/20251204-084921_binTestAcc8873_seed190838_epochs100_2x12000_b256_lr50_interconnect.npz"
 INPUT_SIZE_IN_BITS = 16 * 16 * 4
 
 NUMBER_OF_TESTS_SAMPLES_TO_RUN = 4 # run 4 test samples
@@ -84,6 +84,7 @@ def assert_output(dut, y):
         # take only first bits (in string format)
         # assert str(dut.tt_um_rejunity_lgn_mnist.y.value)[::-1].startswith(array_to_bin(y))
         assert str(dut.i_chip_core.lgn.y.value)[::-1].startswith(array_to_bin(y))
+        print(str(dut.i_chip_core.lgn.y.value))
 
     categories = np.sum(y.reshape(10, -1), -1)
     print(categories)
@@ -175,6 +176,7 @@ async def test_lgn(dut):
         logger.info(f"Input: {array_to_bin(x)}")
         logger.info("Clear input buffer")
         dut.input_PAD.value = ( 0 if alt == 0 else 255) | WRITE_ENABLE
+        # is_resolvable()
         def category_index(): return dut.bidir_PAD.value.to_unsigned() & 15 if (not SEVEN_SEGMENT) else seven_segment_inverse(dut.bidir_PAD.value.to_unsigned() & 127)
         def category_value(): return (dut.bidir_PAD.value.to_unsigned() >> 8) & 255
         if CLEAR_BETWEEN_TEST_SAMPLES:
@@ -198,7 +200,10 @@ async def test_lgn(dut):
             i += 1
 
         dut.input_PAD.value = 0 | WRITE_DISABLE
-        await ClockCycles(dut.clk_PAD, 1)
+        for _ in range(10):
+            await ClockCycles(dut.clk_PAD, 1)
+            print(category_index(), category_value())
+        
         logger.info(f"Computed best index: {category_index()} value: {category_value()}")
 
         logger.info(f"Expected output of the last layer: {array_to_bin(y)}")
