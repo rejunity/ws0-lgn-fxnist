@@ -32,7 +32,7 @@ module chip_core #(
     
     // Disable pull-up and pull-down for input
     assign input_pu = '0;
-    assign input_pd = '0;
+    assign input_pd = '1;
 
     // Set the bidir as output
     assign bidir_oe = '1;
