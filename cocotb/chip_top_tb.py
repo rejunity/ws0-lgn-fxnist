@@ -27,8 +27,8 @@ import numpy as np
 WRITE_ENABLE  = 0
 WRITE_DISABLE = 256
 
-gates_value = os.getenv('GATES')
-GATE_LEVEL_SIMULATION = not gates_value in (None, "no")
+# gates_value = os.getenv('GATES')
+GATE_LEVEL_SIMULATION = not gl in (False, 0, None, "no")
 print("GATES", GATE_LEVEL_SIMULATION)
 
 CLEAR_BETWEEN_TEST_SAMPLES = False
@@ -45,6 +45,7 @@ X = \
 
 
 Y = "../src/20251204-081925_binTestAcc8807_seed190838_epochs300_2x8000_b256_lr30_interconnect.npz"
+INPUT_SIZE_IN_BITS = 16 * 16 * 4
 
 NUMBER_OF_TESTS_SAMPLES_TO_RUN = 4 # run 4 test samples
 ###############################################################################
@@ -159,8 +160,9 @@ async def test_lgn(dut):
     # Wait for some time...
     await ClockCycles(dut.clk_PAD, 10)
 
-    # dut.input_PAD.value = 0 | WRITE_ENABLE
-    # await ClockCycles(dut.clk_PAD, 256//8)
+    if GATE_LEVEL_SIMULATION:
+        dut.input_PAD.value = 0 | WRITE_ENABLE
+        await ClockCycles(dut.clk_PAD, INPUT_SIZE_IN_BITS//8)
 
     logger.info("Test network")
     print("test network starts")
